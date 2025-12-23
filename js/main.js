@@ -1,7 +1,7 @@
-// Main JavaScript for Enercon Solutions Website
+// Main JavaScript for Enercon Solutions Website - Mobile Optimized
 
 document.addEventListener('DOMContentLoaded', function() {
-    // ====== MOBILE MENU TOGGLE ======
+    // ====== MOBILE MENU FUNCTIONALITY ======
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
     const mainNav = document.querySelector('.main-nav');
     const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
@@ -9,55 +9,116 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mobile menu toggle
     if (mobileMenuBtn) {
         mobileMenuBtn.addEventListener('click', function(e) {
+            e.preventDefault();
             e.stopPropagation();
+            
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', !isExpanded);
             mainNav.classList.toggle('active');
-            this.innerHTML = mainNav.classList.contains('active') 
-                ? '<i class="fas fa-times"></i>' 
-                : '<i class="fas fa-bars"></i>';
+            
+            // Toggle hamburger icon
+            const icon = this.querySelector('i');
+            if (icon) {
+                if (mainNav.classList.contains('active')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+            
+            // Toggle body scroll
+            document.body.style.overflow = mainNav.classList.contains('active') ? 'hidden' : '';
         });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.main-nav') && !event.target.closest('.mobile-menu-btn')) {
+                closeMobileMenu();
+            }
+        });
+        
+        // Close menu on escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && mainNav.classList.contains('active')) {
+                closeMobileMenu();
+            }
+        });
+        
+        function closeMobileMenu() {
+            mainNav.classList.remove('active');
+            mobileMenuBtn.setAttribute('aria-expanded', 'false');
+            const icon = mobileMenuBtn.querySelector('i');
+            if (icon) {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+            document.body.style.overflow = '';
+        }
     }
     
-    // Dropdown toggle for mobile
+    // Mobile dropdown functionality
     dropdownToggles.forEach(toggle => {
         toggle.addEventListener('click', function(e) {
             if (window.innerWidth <= 768) {
                 e.preventDefault();
+                e.stopPropagation();
+                
                 const dropdown = this.parentElement;
-                dropdown.classList.toggle('active');
+                const isExpanded = this.getAttribute('aria-expanded') === 'true';
                 
                 // Close other dropdowns
                 document.querySelectorAll('.dropdown').forEach(otherDropdown => {
                     if (otherDropdown !== dropdown) {
                         otherDropdown.classList.remove('active');
+                        otherDropdown.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
                     }
                 });
+                
+                // Toggle current dropdown
+                dropdown.classList.toggle('active');
+                this.setAttribute('aria-expanded', !isExpanded);
+                
+                // Toggle chevron icon
+                const icon = this.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('fa-chevron-down');
+                    icon.classList.toggle('fa-chevron-up');
+                }
             }
         });
     });
     
-    // Close mobile menu when clicking outside
-    document.addEventListener('click', function(event) {
-        if (!event.target.closest('.main-nav') && !event.target.closest('.mobile-menu-btn')) {
-            mainNav.classList.remove('active');
-            if (mobileMenuBtn) {
-                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-            }
-            
-            // Close all dropdowns
-            document.querySelectorAll('.dropdown').forEach(dropdown => {
-                dropdown.classList.remove('active');
-            });
-        }
-    });
-    
-    // Close menu when clicking a link
-    const navLinks = document.querySelectorAll('.main-nav a:not(.dropdown-toggle)');
-    navLinks.forEach(link => {
+    // Close dropdowns when clicking a link
+    const dropdownLinks = document.querySelectorAll('.dropdown-menu a');
+    dropdownLinks.forEach(link => {
         link.addEventListener('click', function() {
             if (window.innerWidth <= 768) {
-                mainNav.classList.remove('active');
-                if (mobileMenuBtn) {
-                    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                const dropdown = this.closest('.dropdown');
+                if (dropdown) {
+                    dropdown.classList.remove('active');
+                    const toggle = dropdown.querySelector('.dropdown-toggle');
+                    if (toggle) {
+                        toggle.setAttribute('aria-expanded', 'false');
+                        const icon = toggle.querySelector('i');
+                        if (icon) {
+                            icon.classList.remove('fa-chevron-up');
+                            icon.classList.add('fa-chevron-down');
+                        }
+                    }
+                }
+                
+                // Close mobile menu
+                if (mainNav && mobileMenuBtn) {
+                    mainNav.classList.remove('active');
+                    mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                    const icon = mobileMenuBtn.querySelector('i');
+                    if (icon) {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                    document.body.style.overflow = '';
                 }
             }
         });
@@ -143,14 +204,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 (currentPage.includes('privacy') && linkPage === 'privacy.html') ||
                 (currentPage.includes('terms') && linkPage === 'terms.html')) {
                 link.classList.add('active');
-                
-                // Also activate parent dropdown for service pages
-                if (linkPage.includes('electrical.html') || linkPage.includes('civil.html')) {
-                    const dropdownToggle = document.querySelector('.dropdown-toggle');
-                    if (dropdownToggle) {
-                        dropdownToggle.classList.add('active');
-                    }
-                }
             }
         });
     }
@@ -170,6 +223,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     top: targetElement.offsetTop - 100,
                     behavior: 'smooth'
                 });
+                
+                // Close mobile menu if open
+                if (window.innerWidth <= 768 && mainNav && mainNav.classList.contains('active')) {
+                    mainNav.classList.remove('active');
+                    if (mobileMenuBtn) {
+                        mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                        const icon = mobileMenuBtn.querySelector('i');
+                        if (icon) {
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
+                        }
+                    }
+                    document.body.style.overflow = '';
+                }
             }
         });
     });
@@ -191,18 +258,20 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Service card clicks
-    const serviceCards = document.querySelectorAll('.service-card');
-    serviceCards.forEach(card => {
-        card.addEventListener('click', function(e) {
-            if (!e.target.closest('a') && !e.target.closest('button')) {
-                const link = this.querySelector('a');
-                if (link) {
-                    window.location.href = link.href;
+    // Service card clicks for mobile
+    if (window.innerWidth <= 768) {
+        const serviceCards = document.querySelectorAll('.service-card');
+        serviceCards.forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (!e.target.closest('a') && !e.target.closest('button')) {
+                    const link = this.querySelector('a');
+                    if (link) {
+                        window.location.href = link.href;
+                    }
                 }
-            }
+            });
         });
-    });
+    }
     
     // ====== NEWSLETTER FORM ======
     const newsletterForm = document.querySelector('.newsletter-form');
@@ -272,28 +341,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // ====== SERVICE CARD HOVER EFFECTS ======
-    const electricalCard = document.getElementById('electrical-service');
-    const civilCard = document.getElementById('civil-service');
-    
-    if (electricalCard) {
-        electricalCard.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-15px) scale(1.02)';
-        });
+    // ====== SERVICE CARD HOVER EFFECTS (Desktop only) ======
+    if (window.innerWidth > 768) {
+        const electricalCard = document.getElementById('electrical-service');
+        const civilCard = document.getElementById('civil-service');
         
-        electricalCard.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(-15px)';
-        });
-    }
-    
-    if (civilCard) {
-        civilCard.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-15px) scale(1.02)';
-        });
+        if (electricalCard) {
+            electricalCard.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-15px) scale(1.02)';
+            });
+            
+            electricalCard.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(-15px)';
+            });
+        }
         
-        civilCard.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(-15px)';
-        });
+        if (civilCard) {
+            civilCard.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-15px) scale(1.02)';
+            });
+            
+            civilCard.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(-15px)';
+            });
+        }
     }
     
     // ====== HERO EMOJI ANIMATIONS ======
@@ -302,13 +373,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const civilEmoji = document.querySelector('.civil-emoji');
         
         if (electricalEmoji) {
-            // Add electrical emoji
             electricalEmoji.innerHTML = '👨‍🔧';
             electricalEmoji.title = 'Electrical Engineer';
         }
         
         if (civilEmoji) {
-            // Add civil emoji
             civilEmoji.innerHTML = '👷‍♂️';
             civilEmoji.title = 'Civil Engineer';
         }
@@ -327,25 +396,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 'event_label': label
             });
         }
-        
-        // Custom analytics
-        const analyticsData = {
-            event: action,
-            category: category,
-            label: label,
-            page: window.location.pathname,
-            timestamp: new Date().toISOString(),
-            userAgent: navigator.userAgent
-        };
-        
-        // You can send this data to your server here
-        // fetch('/api/analytics', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify(analyticsData)
-        // });
     }
     
     // Track page view
@@ -373,32 +423,29 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.classList.add('touch-device');
     }
     
-    // ====== FIX FOOTER POSITION ON MOBILE ======
-    function fixFooterPosition() {
-        if (window.innerHeight > document.body.offsetHeight) {
-            const footer = document.querySelector('.main-footer');
-            if (footer) {
-                footer.style.position = 'fixed';
-                footer.style.bottom = '0';
-                footer.style.width = '100%';
-            }
-        } else {
-            const footer = document.querySelector('.main-footer');
-            if (footer) {
-                footer.style.position = 'relative';
-                footer.style.bottom = 'auto';
-            }
-        }
+    // ====== FIX FOR IOS VIEWPORT HEIGHT ======
+    function fixViewportHeight() {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
     }
     
-    // Initial check
-    fixFooterPosition();
+    fixViewportHeight();
+    window.addEventListener('resize', fixViewportHeight);
+    window.addEventListener('orientationchange', function() {
+        setTimeout(fixViewportHeight, 500);
+    });
     
-    // Check on resize
-    window.addEventListener('resize', fixFooterPosition);
+    // ====== PREVENT FORM ZOOM ON IOS ======
+    const formInputs = document.querySelectorAll('input, textarea, select');
+    formInputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+                document.body.style.zoom = "100%";
+            }
+        });
+    });
     
     // ====== ENHANCED FORM INTERACTIONS ======
-    const formInputs = document.querySelectorAll('.form-group input, .form-group textarea, .form-group select');
     formInputs.forEach(input => {
         input.addEventListener('focus', function() {
             this.parentElement.classList.add('focused');
@@ -411,20 +458,84 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // ====== SMOOTH SCROLL FOR ANCHOR LINKS ======
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            if (targetId === '#') return;
-            
-            const targetElement = document.querySelector(targetId);
-            if (targetElement) {
-                window.scrollTo({
-                    top: targetElement.offsetTop - 80,
-                    behavior: 'smooth'
-                });
+    // ====== HANDLE RESIZE EVENTS ======
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            // Re-initialize mobile menu if needed
+            if (window.innerWidth > 768 && mainNav && mainNav.classList.contains('active')) {
+                mainNav.classList.remove('active');
+                if (mobileMenuBtn) {
+                    mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                    const icon = mobileMenuBtn.querySelector('i');
+                    if (icon) {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                }
+                document.body.style.overflow = '';
             }
-        });
+        }, 250);
     });
+    
+    // ====== FIX FOR ANDROID CHROME ADDRESS BAR ======
+    if (/Android/.test(navigator.userAgent)) {
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                window.scrollTo(0, 1);
+            }, 0);
+        });
+    }
+    
+    // ====== IMPROVE TOUCH SCROLLING ======
+    if (isTouchDevice()) {
+        document.body.style.overflow = 'auto';
+        document.body.style.webkitOverflowScrolling = 'touch';
+    }
 });
+
+// ====== DEBOUNCE FUNCTION FOR PERFORMANCE ======
+function debounce(func, wait = 10) {
+    let timeout;
+    return function() {
+        const context = this, args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+}
+
+// ====== THROTTLE FUNCTION FOR PERFORMANCE ======
+function throttle(func, limit = 100) {
+    let inThrottle;
+    return function() {
+        const context = this, args = arguments;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+
+// ====== IOS SPECIFIC FIXES ======
+(function() {
+    if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+        // Fix for iOS viewport height
+        function setVH() {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', vh + 'px');
+        }
+        
+        setVH();
+        window.addEventListener('resize', setVH);
+        window.addEventListener('orientationchange', setVH);
+        
+        // Prevent double tap zoom
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    }
+})();
