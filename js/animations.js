@@ -1,5 +1,4 @@
-// Optimized Animations for Enercon Solutions Website
-// Mobile-friendly with performance optimizations
+// Optimized Animations for Enercon Solutions Website - Mobile Friendly
 
 document.addEventListener('DOMContentLoaded', function() {
     // ====== MOBILE DETECTION & PERFORMANCE SETTINGS ======
@@ -17,166 +16,75 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
     
-    function throttle(func, limit = 100) {
-        let inThrottle;
-        return function() {
-            const context = this, args = arguments;
-            if (!inThrottle) {
-                func.apply(context, args);
-                inThrottle = true;
-                setTimeout(() => inThrottle = false, limit);
-            }
-        };
-    }
-    
-    // ====== ELECTRICAL SERVICE ANIMATIONS ======
+    // ====== ELECTRICAL SERVICE ANIMATIONS (Desktop only) ======
     function initElectricalAnimations() {
         const electricalCard = document.getElementById('electrical-service');
         const electricalIcon = document.querySelector('.electrical-card .service-icon');
         
-        if (!electricalCard || !electricalIcon) return;
+        if (!electricalCard || !electricalIcon || !shouldAnimate) return;
         
-        // Only create bolt elements on desktop with animation enabled
-        if (shouldAnimate) {
-            for (let i = 0; i < 3; i++) {
-                const bolt = document.createElement('div');
-                bolt.className = 'lightning-bolt';
-                bolt.setAttribute('aria-hidden', 'true');
-                bolt.style.cssText = `
-                    position: absolute;
-                    width: 3px;
-                    height: ${15 + i * 5}px;
-                    background: linear-gradient(to bottom, #FFD700, #FFA500);
-                    opacity: 0;
-                    z-index: 10;
-                    pointer-events: none;
-                    border-radius: 2px;
-                `;
-                electricalIcon.appendChild(bolt);
-            }
+        // Create bolt elements for desktop only
+        for (let i = 0; i < 3; i++) {
+            const bolt = document.createElement('div');
+            bolt.className = 'lightning-bolt';
+            bolt.setAttribute('aria-hidden', 'true');
+            bolt.style.cssText = `
+                position: absolute;
+                width: 3px;
+                height: ${15 + i * 5}px;
+                background: linear-gradient(to bottom, #FFD700, #FFA500);
+                opacity: 0;
+                z-index: 10;
+                pointer-events: none;
+                border-radius: 2px;
+            `;
+            electricalIcon.appendChild(bolt);
         }
         
         // Hover animation for desktop only
-        if (!isMobile) {
-            electricalCard.addEventListener('mouseenter', throttle(function() {
-                if (!shouldAnimate) return;
+        electricalCard.addEventListener('mouseenter', function() {
+            const bolts = this.querySelectorAll('.lightning-bolt');
+            
+            // Animate each bolt
+            bolts.forEach((bolt, index) => {
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 40 + Math.random() * 20;
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
                 
-                const bolts = this.querySelectorAll('.lightning-bolt');
+                bolt.style.left = `calc(50% + ${x}px)`;
+                bolt.style.top = `calc(50% + ${y}px)`;
+                bolt.style.transform = `rotate(${Math.random() * 360}deg)`;
                 
-                // Animate each bolt
-                bolts.forEach((bolt, index) => {
-                    const angle = Math.random() * Math.PI * 2;
-                    const distance = 40 + Math.random() * 20;
-                    const x = Math.cos(angle) * distance;
-                    const y = Math.sin(angle) * distance;
-                    
-                    bolt.style.left = `calc(50% + ${x}px)`;
-                    bolt.style.top = `calc(50% + ${y}px)`;
-                    bolt.style.transform = `rotate(${Math.random() * 360}deg)`;
+                setTimeout(() => {
+                    bolt.style.opacity = '1';
+                    bolt.style.boxShadow = '0 0 10px #FFD700';
                     
                     setTimeout(() => {
-                        bolt.style.opacity = '1';
-                        bolt.style.boxShadow = '0 0 10px #FFD700';
-                        
-                        setTimeout(() => {
-                            bolt.style.opacity = '0';
-                            bolt.style.boxShadow = 'none';
-                        }, 200);
-                    }, index * 100);
-                });
-                
-                // Sparkle effect
-                const sparkContainer = this.querySelector('.animation-spark');
-                if (sparkContainer) {
-                    sparkContainer.style.animation = 'none';
-                    void sparkContainer.offsetWidth; // Trigger reflow
-                    sparkContainer.style.animation = 'thunderStrike 1s ease-out';
-                }
-                
-            }, 300)); // Throttle to 300ms
-            
-            // Continuous subtle glow effect (desktop only)
-            if (shouldAnimate) {
-                setInterval(() => {
-                    if (electricalCard.matches(':hover')) {
-                        const icon = electricalCard.querySelector('.service-icon');
-                        if (icon) {
-                            icon.style.boxShadow = `
-                                0 0 20px rgba(30, 144, 255, 0.5),
-                                0 0 40px rgba(30, 144, 255, 0.3),
-                                0 0 60px rgba(30, 144, 255, 0.1)
-                            `;
-                            
-                            setTimeout(() => {
-                                icon.style.boxShadow = '';
-                            }, 500);
-                        }
-                    }
-                }, 3000);
-            }
-        }
-        
-        // Touch animation for mobile (simplified)
-        if (isMobile) {
-            electricalCard.addEventListener('touchstart', function(e) {
-                if (e.touches.length === 1) { // Single touch
-                    this.style.transform = 'scale(0.98)';
-                    const icon = this.querySelector('.service-icon');
-                    if (icon) {
-                        icon.style.boxShadow = '0 0 15px rgba(30, 144, 255, 0.4)';
-                        setTimeout(() => {
-                            icon.style.boxShadow = '';
-                        }, 300);
-                    }
-                }
+                        bolt.style.opacity = '0';
+                        bolt.style.boxShadow = 'none';
+                    }, 200);
+                }, index * 100);
             });
-            
-            electricalCard.addEventListener('touchend', function() {
-                this.style.transform = '';
-            });
-        }
+        });
     }
     
-    // ====== CIVIL SERVICE ANIMATIONS ======
+    // ====== CIVIL SERVICE ANIMATIONS (Desktop only) ======
     function initCivilAnimations() {
         const civilCard = document.getElementById('civil-service');
-        const civilIcon = document.querySelector('.civil-card .service-icon');
         
-        if (!civilCard || !civilIcon) return;
+        if (!civilCard || !shouldAnimate) return;
         
         // Hover animation for desktop only
-        if (!isMobile && shouldAnimate) {
-            civilCard.addEventListener('mouseenter', throttle(function() {
-                // Brick pattern animation
-                const brickContainer = this.querySelector('.animation-brick');
-                if (brickContainer) {
-                    brickContainer.style.animation = 'none';
-                    void brickContainer.offsetWidth;
-                    brickContainer.style.animation = 'brickFall 1.5s ease-out';
-                }
-                
-            }, 300)); // Throttle to 300ms
-        }
-        
-        // Touch animation for mobile (simplified)
-        if (isMobile) {
-            civilCard.addEventListener('touchstart', function(e) {
-                if (e.touches.length === 1) {
-                    this.style.transform = 'scale(0.98)';
-                    const icon = this.querySelector('.service-icon');
-                    if (icon) {
-                        icon.style.boxShadow = '0 0 15px rgba(107, 142, 35, 0.4)';
-                        setTimeout(() => {
-                            icon.style.boxShadow = '';
-                        }, 300);
-                    }
-                }
-            });
-            
-            civilCard.addEventListener('touchend', function() {
-                this.style.transform = '';
-            });
-        }
+        civilCard.addEventListener('mouseenter', function() {
+            // Brick pattern animation
+            const brickContainer = this.querySelector('.animation-brick');
+            if (brickContainer) {
+                brickContainer.style.animation = 'none';
+                void brickContainer.offsetWidth;
+                brickContainer.style.animation = 'brickFall 1.5s ease-out';
+            }
+        });
     }
     
     // ====== PAGE LOAD ANIMATIONS ======
@@ -219,11 +127,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 600 + index * 100);
         });
         
-        // Add emoji animations
+        // Add emoji animations (simplified for mobile)
         const emojis = document.querySelectorAll('.emoji-character');
         emojis.forEach((emoji, index) => {
-            if (prefersReducedMotion) {
-                emoji.style.animation = 'none';
+            if (prefersReducedMotion || isMobile) {
+                emoji.style.opacity = '1';
                 return;
             }
             
@@ -235,11 +143,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // ====== SCROLL ANIMATIONS ======
+    // ====== SCROLL ANIMATIONS (Optimized for mobile) ======
     function initScrollAnimations() {
-        if (prefersReducedMotion) return;
+        if (prefersReducedMotion || isMobile) return;
         
-        const handleScroll = throttle(() => {
+        const handleScroll = debounce(() => {
             // Animate elements on scroll
             const animatedElements = document.querySelectorAll('.service-card, .feature, .industry-item, .about-feature, .service-item, .contact-card');
             animatedElements.forEach(element => {
@@ -250,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     element.classList.add('animated');
                 }
             });
-        }, 50); // Throttle scroll events to 50ms
+        }, 50);
         
         window.addEventListener('scroll', handleScroll, { passive: true });
         
@@ -258,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
         handleScroll();
     }
     
-    // ====== CTA SECTION ANIMATIONS ======
+    // ====== CTA SECTION ANIMATIONS (Desktop only) ======
     function initCTASection() {
         const ctaSection = document.querySelector('.cta-section');
         if (!ctaSection || !shouldAnimate) return;
@@ -304,18 +212,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         display: none !important;
                     }
                     
-                    .service-card:hover {
+                    .service-card:hover,
+                    .feature:hover,
+                    .industry-item:hover,
+                    .contact-card:hover {
                         transform: translateY(-5px) !important;
                     }
                     
                     .emoji-character {
                         animation: none !important;
-                    }
-                    
-                    * {
-                        animation-duration: 0.01ms !important;
-                        animation-iteration-count: 1 !important;
-                        transition-duration: 0.01ms !important;
                     }
                 }
             `;
@@ -335,16 +240,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Always initialize these (mobile-friendly)
         initPageLoadAnimations();
         initScrollAnimations();
-        
-        // Add performance monitoring
-        if ('performance' in window) {
-            const perfMark = `animations_loaded_${Date.now()}`;
-            performance.mark(perfMark);
-        }
     }
     
     // ====== LAZY LOAD ANIMATIONS ======
-    // Wait for critical content to load first
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initAnimations);
     } else {
@@ -370,21 +268,6 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.lightning-bolt, .brick-particle, .cta-particle').forEach(el => {
                 if (el.parentNode) el.parentNode.removeChild(el);
             });
-            
-            // Re-initialize animations if needed
-            if (window.innerWidth > 768 && !isMobile) {
-                const perfMark = `resize_reinit_${Date.now()}`;
-                performance.mark(perfMark);
-            }
         }, 250);
     }, 100));
-    
-    // ====== ERROR HANDLING ======
-    window.addEventListener('error', function(e) {
-        console.warn('Animation error:', e.message);
-        // Disable animations on error
-        document.querySelectorAll('.lightning-bolt, .brick-particle, .cta-particle').forEach(el => {
-            el.style.display = 'none';
-        });
-    }, true);
 });
