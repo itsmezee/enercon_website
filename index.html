@@ -1,63 +1,134 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ENHANCED VIEWPORT FOR BETTER MOBILE SUPPORT -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    
+    <!-- MOBILE OPTIMIZATION META TAGS -->
+    <meta name="HandheldFriendly" content="true">
+    <meta name="MobileOptimized" content="width">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
     <title>Enercon Solutions | Powering Projects. Building Foundations.</title>
     <meta name="description" content="Professional Electrical and Civil engineering solutions in Hyderabad. Project services, material trading, and end-to-end execution.">
     <meta name="keywords" content="Electrical services, Civil engineering, Hyderabad, Project services, Material trading, EPC">
+    
+    <!-- CRITICAL CSS INLINE FOR FASTER LOADING -->
+    <style>
+        /* Critical above-the-fold styles */
+        .main-header {
+            background: #fff;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .hero {
+            padding-top: 120px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #4169E1 0%, #6B8E23 100%);
+            color: white;
+        }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .mobile-menu-btn {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: flex;
+            }
+            .main-nav {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                width: 100%;
+                background: white;
+                transition: left 0.3s ease;
+            }
+            .main-nav.active {
+                left: 0;
+            }
+        }
+    </style>
+    
+    <!-- EXTERNAL STYLESHEETS -->
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-XXXXXXXXXX');
-    </script>
+    
+    <!-- PRELOAD CRITICAL RESOURCES -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://image2url.com">
 </head>
 <body>
+    <!-- NOSCRIPT FALLBACK -->
+    <noscript>
+        <div style="padding: 20px; text-align: center; background: #f8f9fa;">
+            <h3>Please enable JavaScript for the best experience</h3>
+            <p>This website requires JavaScript to function properly.</p>
+        </div>
+    </noscript>
+    
     <!-- WhatsApp Floating Button -->
     <a href="https://wa.me/918143038693?text=Hello%20Enercon%20Solutions%2C%20I%20would%20like%20to%20enquire%20about%20your%20services." 
-       class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+       class="whatsapp-float" 
+       target="_blank" 
+       rel="noopener noreferrer" 
+       aria-label="Chat on WhatsApp">
         <i class="fab fa-whatsapp"></i>
     </a>
 
-    <!-- Header & Navigation -->
-    <header class="main-header">
+    <!-- Header -->
+    <header class="main-header" role="banner">
         <div class="container">
-            <div class="logo">
-                <a href="index.html">
+            <div class="logo" itemscope itemtype="https://schema.org/Organization">
+                <a href="index.html" itemprop="url">
                     <img src="https://image2url.com/images/1766477756017-6da15f35-3020-4576-a57d-4799b2257fc6.jpeg" 
                          alt="Enercon Solutions Logo" 
-                         class="site-logo">
+                         class="site-logo"
+                         itemprop="logo"
+                         width="60" 
+                         height="60">
                     <div class="logo-text">
-                        <h1>Enercon Solutions</h1>
-                        <p>Powering Projects. Building Foundations.</p>
+                        <h1 itemprop="name">Enercon Solutions</h1>
+                        <p itemprop="description">Powering Projects. Building Foundations.</p>
                     </div>
                 </a>
             </div>
-            <nav class="main-nav">
+            
+            <button class="mobile-menu-btn" 
+                    aria-label="Toggle navigation menu" 
+                    aria-expanded="false" 
+                    aria-controls="main-navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <nav class="main-nav" id="main-navigation" role="navigation" aria-label="Main Navigation">
                 <ul>
                     <li><a href="index.html" class="active">Home</a></li>
                     <li><a href="about.html">About Us</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle">Services <i class="fas fa-chevron-down"></i></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="electrical.html" class="electrical-link">Electrical Division</a></li>
-                            <li><a href="civil.html" class="civil-link">Civil Division</a></li>
+                        <a href="#" class="dropdown-toggle" aria-expanded="false" aria-haspopup="true">
+                            Services <i class="fas fa-chevron-down"></i>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li role="none"><a href="electrical.html" class="electrical-link" role="menuitem">Electrical Division</a></li>
+                            <li role="none"><a href="civil.html" class="civil-link" role="menuitem">Civil Division</a></li>
                         </ul>
                     </li>
                     <li><a href="contact.html">Contact Us</a></li>
                     <li><a href="tel:+918143038693" class="cta-button">Call Now</a></li>
                 </ul>
             </nav>
-            <div class="mobile-menu-btn" aria-label="Toggle navigation menu">
-                <i class="fas fa-bars"></i>
-            </div>
         </div>
     </header>
 
@@ -239,7 +310,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="main-footer">
+    <footer class="main-footer" role="contentinfo">
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-col">
@@ -341,7 +412,47 @@
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
-    <script src="js/animations.js"></script>
+    <!-- INLINE JAVASCRIPT FOR CRITICAL FUNCTIONALITY -->
+    <script>
+        // Fix for iOS viewport height
+        if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+            function setVH() {
+                let vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--vh', vh + 'px');
+                document.querySelector('.hero').style.height = 'calc(var(--vh, 1vh) * 100 - 80px)';
+            }
+            setVH();
+            window.addEventListener('resize', setVH);
+            window.addEventListener('orientationchange', setVH);
+        }
+        
+        // Prevent form zoom on iOS
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+                        document.body.style.zoom = "100%";
+                    }
+                });
+            });
+            
+            // Add loaded class for animations
+            document.body.classList.add('loaded');
+        });
+        
+        // Fix for Android Chrome
+        if (/Android/.test(navigator.userAgent)) {
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    window.scrollTo(0, 1);
+                }, 0);
+            });
+        }
+    </script>
+    
+    <!-- JAVASCRIPT FILES -->
+    <script src="js/main.js" defer></script>
+    <script src="js/animations.js" defer></script>
 </body>
 </html>
